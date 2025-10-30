@@ -1,0 +1,72 @@
+/* AI Scratch Card Rewards Plugin Styles */
+
+.aiscratch-card-container {
+    max-width: 400px;
+    margin: 30px auto;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    background: #f8f8f8;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.aiscratch-canvas {
+    width: 100%;
+    height: 200px;
+    background: #999;
+    cursor: crosshair;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.aiscratch-hidden-content {
+    margin-top: 20px;
+    text-align: center;
+    display: none;
+}
+
+.aiscratch-prize {
+    font-size: 22px;
+    font-weight: bold;
+    color: green;
+}
+
+.aiscratch-lose {
+    font-size: 20px;
+    color: red;
+}
+
+.aiscratch-lead-form {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.aiscratch-lead-form input[type="text"],
+.aiscratch-lead-form input[type="email"] {
+    width: 80%;
+    padding: 8px;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.aiscratch-lead-form label {
+    display: block;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.aiscratch-submit-lead {
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.aiscratch-submit-lead:hover {
+    background-color: #005c8a;
+}
