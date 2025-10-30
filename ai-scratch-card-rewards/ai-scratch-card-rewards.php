@@ -22,7 +22,6 @@ define('AISCRATCH_VERSION', '1.0.0');
 require_once AISCRATCH_PLUGIN_DIR . 'includes/admin-page.php';
 require_once AISCRATCH_PLUGIN_DIR . 'includes/shortcode.php';
 require_once AISCRATCH_PLUGIN_DIR . 'includes/db-functions.php';
-require_once AISCRATCH_PLUGIN_DIR . 'includes/helpers.php';
 require_once AISCRATCH_PLUGIN_DIR . 'includes/admin-ajax.php';
 
 // Enqueue Scripts & Styles
