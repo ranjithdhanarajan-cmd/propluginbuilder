@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
         var $canvas = $container.find('.aiscratch-canvas');
         var $hidden = $container.find('.aiscratch-hidden-content');
         var $leadForm = $container.find('.aiscratch-lead-form');
-       var localized = typeof AISCRATCH !== 'undefined' ? AISCRATCH : null;
+        var localized = typeof AISCRATCH !== 'undefined' ? AISCRATCH : null;
 
         var surfaceColor = $canvas.data('surface-color') || '#999999';
         var coverImage = $canvas.data('cover-image') || '';
@@ -34,14 +34,14 @@ jQuery(document).ready(function($) {
         };
 
         var initScratch = function() {
-var prizeValue = $hidden.data('prize-value') || '';
+ var prizeValue = $hidden.data('prize-value') || '';
             var defaultResult = $hidden.data('default-result') || 'lose';
 
             var scratchOptions = {
                 size: 50,
         scratchMove: function(e, percent) {
                     if (percent > 50) {
-                 var result = defaultResult;
+                result = defaultResult;
                         var displayValue = prizeValue;
 
             if ($hidden.find('.aiscratch-prize-img').length) {
@@ -52,7 +52,7 @@ var prizeValue = $hidden.data('prize-value') || '';
                         $canvas.wScratchPad('clear');
                     }
                 }
-                        };
+                         };
 
             if (coverImage) {
                 scratchOptions.fg = coverImage;
@@ -77,7 +77,7 @@ var prizeValue = $hidden.data('prize-value') || '';
                     return;
                 }
 
-                        if (localized) {
+                       if (localized) {
                     $.post(localized.ajax_url, {
                         action: 'aiscratch_submit_lead',
                         nonce: localized.nonce,
