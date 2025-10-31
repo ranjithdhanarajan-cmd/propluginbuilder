@@ -137,3 +137,40 @@ function aiscratch_render_all_cards() {
     </div>
     <?php
 }
+function aiscratch_render_analytics() {
+    global $wpdb;
+
+    $logs_table = $wpdb->prefix . 'ai_scratch_logs';
+
+    $total_plays = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table");
+    $total_wins  = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table WHERE result = 'win'");
+    $win_rate    = $total_plays > 0 ? round(($total_wins / $total_plays) * 100, 2) : 0;
+    ?>
+    <div class="wrap">
+        <h1>Scratch Card Analytics</h1>
+
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Total Plays</td>
+                    <td><?php echo esc_html($total_plays); ?></td>
+                </tr>
+                <tr>
+                    <td>Total Wins</td>
+                    <td><?php echo esc_html($total_wins); ?></td>
+                </tr>
+                <tr>
+                    <td>Win Rate</td>
+                    <td><?php echo esc_html($win_rate); ?>%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
