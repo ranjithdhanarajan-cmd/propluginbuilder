@@ -23,13 +23,13 @@ $card_id = isset($_POST['card_id']) ? intval($_POST['card_id']) : 0;
     global $wpdb;
     $log_table   = $wpdb->prefix . 'ai_scratch_logs';
     $cards_table = $wpdb->prefix . 'ai_scratch_cards';
-
+    
     $card = $wpdb->get_row($wpdb->prepare("SELECT * FROM $cards_table WHERE id = %d", $card_id));
     if (!$card) {
         wp_send_json_error(['message' => __('Scratch card not found.', 'ai-scratch-card-rewards')], 404);
     }
 
-     $wpdb->insert(
+    $wpdb->insert(
         $log_table,
         [
             'card_id'    => $card_id,
@@ -57,7 +57,7 @@ $card_id = isset($_POST['card_id']) ? intval($_POST['card_id']) : 0;
 
     $webhook_url = !empty($card->webhook_url) ? esc_url_raw($card->webhook_url) : '';
     if (!empty($webhook_url)) {
- $payload = [
+     $payload = [
             'card_id'   => $card_id,
             'user_id'   => $user_id,
             'ip'        => $ip,
