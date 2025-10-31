@@ -5,6 +5,7 @@ $instance_id    = 'aiscratch_' . uniqid('', true);
 $prize_type     = $card->prize_type ? sanitize_text_field($card->prize_type) : 'text';
 $prize_content  = $card->prize_content;
 $has_prize      = $prize_type !== 'none' && !empty($prize_content);
+$prize_image    = ($has_prize && $prize_type === 'image') ? esc_url($prize_content) : '';
 $cover_image    = $cover_image ? esc_url($cover_image) : '';
 $surface_color  = esc_attr($surface_color);
 $requires_lead  = !empty($requires_lead);
@@ -17,12 +18,16 @@ $default_result = $has_prize ? 'win' : 'lose';
     id="<?php echo esc_attr($instance_id); ?>"
     data-card-id="<?php echo esc_attr($card->id); ?>"
 >
-  <div class="aiscratch-scratchpad" style="position:relative;">
-   <div
+  <div class="aiscratch-scratchpad">
+    <div
       class="aiscratch-hidden-content"
-      style="display:none;"
       data-prize-value="<?php echo esc_attr($prize_value); ?>"
       data-default-result="<?php echo esc_attr($default_result); ?>"
+      data-prize-type="<?php echo esc_attr($prize_type); ?>"
+      data-prize-image="<?php echo esc_attr($prize_image); ?>"
+      aria-hidden="true"
+      aria-live="polite"
+      role="status"
     >
       <?php if ($has_prize && ($prize_type === 'coupon' || $prize_type === 'text')): ?>
         <p class="aiscratch-prize"><?php echo esc_html($prize_content); ?></p>
@@ -31,17 +36,17 @@ $default_result = $has_prize ? 'win' : 'lose';
       <?php elseif ($has_prize && $prize_type === 'image'): ?>
         <img src="<?php echo esc_url($prize_content); ?>" alt="<?php esc_attr_e('Prize Image', 'ai-scratch-card-rewards'); ?>" class="aiscratch-prize-img" />
       <?php else: ?>
-         <p class="aiscratch-lose"><?php echo esc_html($lose_message); ?></p>
+      <p class="aiscratch-lose"><?php echo esc_html($lose_message); ?></p>
       <?php endif; ?>
     </div>
 
-   <div
+<div
       class="aiscratch-canvas"
       data-surface-color="<?php echo $surface_color; ?>"
-      data-cover-image="<?php echo $cover_image; ?>"
+      data-cover-image="<?php echo esc_attr($cover_image); ?>"
     ></div>
 
-<?php if ($requires_lead) : ?>
+         <?php if ($requires_lead) : ?>
       <div class="aiscratch-lead-form">
         <input type="text" placeholder="<?php esc_attr_e('Your Name', 'ai-scratch-card-rewards'); ?>" class="aiscratch-name">
         <input type="email" placeholder="<?php esc_attr_e('Your Email', 'ai-scratch-card-rewards'); ?>" class="aiscratch-email">
