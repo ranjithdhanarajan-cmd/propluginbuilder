@@ -6,19 +6,19 @@ function aiscratch_render_all_cards() {
     global $wpdb;
     $table = $wpdb->prefix . 'ai_scratch_cards';
     $cards = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
-    
+
     $deleted = isset($_GET['deleted']) ? intval($_GET['deleted']) : 0;
     ?>
     <div class="wrap">
         <h1>All Scratch Cards</h1>
 
-        <?php if ($deleted) : ?>
+        <?php if ($deleted) { ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Scratch card deleted.', 'ai-scratch-card-rewards'); ?></p></div>
-        <?php endif; ?>
+        <?php } ?>
 
-        <?php if (empty($cards)) : ?>
-                        <p><?php esc_html_e('No scratch cards found.', 'ai-scratch-card-rewards'); ?> <a href="<?php echo esc_url(admin_url('admin.php?page=ai-scratch-new')); ?>"><?php esc_html_e('Create one now', 'ai-scratch-card-rewards'); ?></a>.</p>
-        <?php else : ?>
+        <?php if (empty($cards)) { ?>
+            <p><?php esc_html_e('No scratch cards found.', 'ai-scratch-card-rewards'); ?> <a href="<?php echo esc_url(admin_url('admin.php?page=ai-scratch-new')); ?>"><?php esc_html_e('Create one now', 'ai-scratch-card-rewards'); ?></a>.</p>
+        <?php } else { ?>
             <table class="widefat striped">
                 <thead>
                     <tr>
@@ -31,7 +31,7 @@ function aiscratch_render_all_cards() {
                     </tr>
                 </thead>
                 <tbody>
-                                <?php foreach ($cards as $card) :
+                               <?php foreach ($cards as $card) {
                         $expired = $card->expiration && strtotime($card->expiration) < time();
                         $edit_url = add_query_arg(
                             [
@@ -56,7 +56,7 @@ function aiscratch_render_all_cards() {
                             <td><?php echo esc_html($card->title); ?></td>
                             <td>
                                 <?php
-        echo $expired
+                                 echo $expired
                                     ? '<span style="color:red;">' . esc_html__('Expired', 'ai-scratch-card-rewards') . '</span>'
                                     : '<span style="color:green;">' . esc_html__('Active', 'ai-scratch-card-rewards') . '</span>';
                                 ?>
@@ -68,10 +68,10 @@ function aiscratch_render_all_cards() {
                                 <a href="<?php echo esc_url($delete_url); ?>" onclick="return confirm('<?php echo esc_js(__('Are you sure you want to delete this scratch card?', 'ai-scratch-card-rewards')); ?>');"><?php esc_html_e('Delete', 'ai-scratch-card-rewards'); ?></a>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
+                         <?php } ?>
                 </tbody>
             </table>
-        <?php endif; ?>
+            <?php } ?>
     </div>
     <?php
 }
@@ -97,9 +97,9 @@ function aiscratch_render_create_card() {
     if (isset($_POST['aiscratch_submit'])) {
         check_admin_referer('aiscratch_create_card');
 
-                    $card_id = isset($_POST['card_id']) ? intval($_POST['card_id']) : 0;
+ $card_id = isset($_POST['card_id']) ? intval($_POST['card_id']) : 0;
 
-                        $title         = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
+ $title         = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
         $cover_image   = isset($_POST['cover_image']) ? esc_url_raw(wp_unslash($_POST['cover_image'])) : '';
         $prize_type    = isset($_POST['prize_type']) ? sanitize_text_field(wp_unslash($_POST['prize_type'])) : 'text';
         $prize_content = isset($_POST['prize_content']) ? wp_kses_post(wp_unslash($_POST['prize_content'])) : '';
@@ -111,18 +111,18 @@ function aiscratch_render_create_card() {
         $email_capture = isset($_POST['email_capture']) ? 1 : 0;
         $webhook_url   = isset($_POST['webhook_url']) ? esc_url_raw(wp_unslash($_POST['webhook_url'])) : '';
 
-                $data = [
+        $data = [
             'title'         => $title,
             'cover_image'   => $cover_image,
             'prize_type'    => $prize_type,
             'prize_content' => $prize_content,
             'probability'   => $probability,
-                    'surface_color' => $surface_color ? $surface_color : null,
+            'surface_color' => $surface_color ? $surface_color : null,
             'max_wins'      => $max_wins,
             'expiration'    => $expiration,
             'email_capture' => $email_capture,
             'webhook_url'   => $webhook_url,
-                     ];
+             ];
 
         $formats = ['%s', '%s', '%s', '%s', '%d', '%s', '%d', '%s', '%d', '%s'];
 
@@ -130,7 +130,7 @@ function aiscratch_render_create_card() {
             $data['surface_color'] = null;
         }
 
-        if ($card_id) {
+       if ($card_id) {
             $updated = $wpdb->update($table, $data, ['id' => $card_id], $formats, ['%d']);
             if (false === $updated) {
                 $error = __('Unable to update scratch card.', 'ai-scratch-card-rewards');
@@ -150,7 +150,7 @@ function aiscratch_render_create_card() {
             }
         }
 
- if ($card_id) {
+        if ($card_id) {
             $card = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $card_id));
         }
     }
@@ -168,34 +168,34 @@ function aiscratch_render_create_card() {
 
     ?>
 
-    <div class="wrap">
-               <h1><?php echo $card_id ? esc_html__('Edit Scratch Card', 'ai-scratch-card-rewards') : esc_html__('Create New Scratch Card', 'ai-scratch-card-rewards'); ?></h1>
+     <div class="wrap">
+<h1><?php echo $card_id ? esc_html__('Edit Scratch Card', 'ai-scratch-card-rewards') : esc_html__('Create New Scratch Card', 'ai-scratch-card-rewards'); ?></h1>
 
-        <?php if ($message) : ?>
+        <?php if ($message) { ?>
             <div class="notice notice-success is-dismissible"><p><?php echo esc_html($message); ?></p></div>
-        <?php endif; ?>
+        <?php } ?>
 
-        <?php if ($error) : ?>
+        <?php if ($error) { ?>
             <div class="notice notice-error"><p><?php echo esc_html($error); ?></p></div>
-        <?php endif; ?>
+        <?php } ?>
 
         <form method="post">
             <?php wp_nonce_field('aiscratch_create_card'); ?>
             <input type="hidden" name="card_id" value="<?php echo esc_attr($card_id); ?>">
             <table class="form-table">
                 <tr>
-        <th><label for="title"><?php esc_html_e('Card Title', 'ai-scratch-card-rewards'); ?></label></th>
+             <th><label for="title"><?php esc_html_e('Card Title', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="title" required class="regular-text" value="<?php echo esc_attr($title_value); ?>"></td>
                 </tr>
                 <tr>
-                     <th><label for="cover_image"><?php esc_html_e('Cover Image URL', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="cover_image"><?php esc_html_e('Cover Image URL', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="cover_image" class="regular-text" placeholder="https://example.com/cover.jpg" value="<?php echo esc_attr($cover_image_value); ?>"></td>
                 </tr>
                 <tr>
                 <th><label for="prize_type"><?php esc_html_e('Prize Type', 'ai-scratch-card-rewards'); ?></label></th>
                     <td>
                         <select name="prize_type">
-              <?php
+                     <?php
                             $options = [
                                 'text'   => __('Custom Text', 'ai-scratch-card-rewards'),
                                 'coupon' => __('Coupon Code', 'ai-scratch-card-rewards'),
@@ -211,27 +211,27 @@ function aiscratch_render_create_card() {
                     </td>
                 </tr>
                 <tr>
-    <th><label for="prize_content"><?php esc_html_e('Prize Content', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="prize_content"><?php esc_html_e('Prize Content', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="prize_content" class="regular-text" placeholder="10% OFF or URL or image link" value="<?php echo esc_attr($prize_content_value); ?>"></td>
                 </tr>
                 <tr>
-     <th><label for="probability"><?php esc_html_e('Win Probability (%)', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="probability"><?php esc_html_e('Win Probability (%)', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="number" name="probability" value="<?php echo esc_attr($probability_value); ?>" min="0" max="100"></td>
                 </tr>
                 <tr>
-    <th><label for="surface_color"><?php esc_html_e('Scratch Surface Color', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="surface_color"><?php esc_html_e('Scratch Surface Color', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="surface_color" class="regular-text" placeholder="#999999" value="<?php echo esc_attr($surface_color_value); ?>"></td>
                 </tr>
                 <tr>
-    <th><label for="max_wins"><?php esc_html_e('Max Wins', 'ai-scratch-card-rewards'); ?></label></th>
+               <th><label for="max_wins"><?php esc_html_e('Max Wins', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="number" name="max_wins" placeholder="<?php esc_attr_e('Optional', 'ai-scratch-card-rewards'); ?>" value="<?php echo esc_attr($max_wins_value); ?>"></td>
                 </tr>
                 <tr>
-    <th><label for="expiration"><?php esc_html_e('Expiration Date', 'ai-scratch-card-rewards'); ?></label></th>
+                 <th><label for="expiration"><?php esc_html_e('Expiration Date', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="date" name="expiration" value="<?php echo esc_attr($expiration_value); ?>"></td>
                 </tr>
                 <tr>
-    <th><label for="email_capture"><?php esc_html_e('Require Email Before Scratch', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="email_capture"><?php esc_html_e('Require Email Before Scratch', 'ai-scratch-card-rewards'); ?></label></th>
                     <td>
                         <label>
                             <input type="checkbox" name="email_capture" value="1" <?php checked($email_capture_value, 1); ?>>
@@ -240,12 +240,12 @@ function aiscratch_render_create_card() {
                     </td>
                 </tr>
                 <tr>
-    <th><label for="webhook_url"><?php esc_html_e('Webhook URL (optional)', 'ai-scratch-card-rewards'); ?></label></th>
+                <th><label for="webhook_url"><?php esc_html_e('Webhook URL (optional)', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="webhook_url" class="regular-text" placeholder="https://your-crm-endpoint.com/webhook" value="<?php echo esc_attr($webhook_value); ?>"></td>
                 </tr>
             </table>
 
-    <?php submit_button($card_id ? __('Update Scratch Card', 'ai-scratch-card-rewards') : __('Create Scratch Card', 'ai-scratch-card-rewards'), 'primary', 'aiscratch_submit'); ?>
+            <?php submit_button($card_id ? __('Update Scratch Card', 'ai-scratch-card-rewards') : __('Create Scratch Card', 'ai-scratch-card-rewards'), 'primary', 'aiscratch_submit'); ?>
         </form>
     </div>
     <?php
@@ -324,3 +324,47 @@ function aiscratch_render_analytics() {
                 </tr>
             </thead>
             <tbody>
+@@ -173,43 +328,43 @@ function aiscratch_render_analytics() {
+                    <td>Total Plays</td>
+                    <td><?php echo esc_html($total_plays); ?></td>
+                </tr>
+                <tr>
+                    <td>Total Wins</td>
+                    <td><?php echo esc_html($total_wins); ?></td>
+                </tr>
+                <tr>
+                    <td>Global Win Rate</td>
+                    <td><?php echo esc_html($win_rate); ?>%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Per Card Stats</h2>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Card Title</th>
+                    <th>Total Plays</th>
+                    <th>Wins</th>
+                    <th>Win Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+<?php foreach ($cards as $card) {
+                    $card_id = intval($card->id);
+         $plays   = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $logs_table WHERE card_id = %d", $card_id));
+                    $wins    = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $logs_table WHERE card_id = %d AND result = 'win'", $card_id));
+                    $rate    = $plays > 0 ? round(($wins / $plays) * 100, 2) : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($card->title); ?></td>
+                        <td><?php echo esc_html($plays); ?></td>
+                        <td><?php echo esc_html($wins); ?></td>
+                        <td><?php echo esc_html($rate); ?>%</td>
+                    </tr>
+        <?php } ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
