@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
         var showPrize = function(prize, result) {
             $hidden.fadeIn();
 
-             if (localized) {
+          if (localized) {
                 // Send AJAX to log result
                 $.post(localized.ajax_url, {
                     action: 'aiscratch_submit_result',
@@ -34,15 +34,14 @@ jQuery(document).ready(function($) {
         };
 
         var initScratch = function() {
- var prizeValue = $hidden.data('prize-value') || '';
+var prizeValue = $hidden.data('prize-value') || '';
             var defaultResult = $hidden.data('default-result') || 'lose';
 
             var scratchOptions = {
                 size: 50,
-        fg: surfaceColor,
         scratchMove: function(e, percent) {
                     if (percent > 50) {
-        var result = defaultResult;
+                 var result = defaultResult;
                         var displayValue = prizeValue;
 
             if ($hidden.find('.aiscratch-prize-img').length) {
@@ -53,15 +52,17 @@ jQuery(document).ready(function($) {
                         $canvas.wScratchPad('clear');
                     }
                 }
-                };
+                        };
 
             if (coverImage) {
-                scratchOptions.bg = coverImage;
+                scratchOptions.fg = coverImage;
+            } else {
+                scratchOptions.fg = surfaceColor;
             }
 
             // Attach wScratchPad
             $canvas.wScratchPad(scratchOptions);
-                };
+        };
 
         // If lead capture is enabled
         if ($leadForm.length > 0 && $leadForm.is(':visible')) {
@@ -76,7 +77,7 @@ jQuery(document).ready(function($) {
                     return;
                 }
 
-            if (localized) {
+                        if (localized) {
                     $.post(localized.ajax_url, {
                         action: 'aiscratch_submit_lead',
                         nonce: localized.nonce,
@@ -101,4 +102,4 @@ jQuery(document).ready(function($) {
             initScratch();
         }
     });
-});                                            
+});
