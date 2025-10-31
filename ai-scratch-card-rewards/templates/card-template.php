@@ -41,7 +41,7 @@ $default_result = $has_prize ? 'win' : 'lose';
       data-cover-image="<?php echo $cover_image; ?>"
     ></div>
 
- <?php if ($requires_lead) : ?>
+<?php if ($requires_lead) : ?>
       <div class="aiscratch-lead-form">
         <input type="text" placeholder="<?php esc_attr_e('Your Name', 'ai-scratch-card-rewards'); ?>" class="aiscratch-name">
         <input type="email" placeholder="<?php esc_attr_e('Your Email', 'ai-scratch-card-rewards'); ?>" class="aiscratch-email">
