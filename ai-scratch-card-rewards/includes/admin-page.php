@@ -1,3 +1,7 @@
+<?php
+if (!defined('ABSPATH')) exit;
+
+// 🔹 All Scratch Cards List
 function aiscratch_render_all_cards() {
     global $wpdb;
     $table = $wpdb->prefix . 'ai_scratch_cards';
@@ -37,6 +41,175 @@ function aiscratch_render_all_cards() {
                 </tbody>
             </table>
         <?php endif; ?>
+    </div>
+    <?php
+}
+
+// 🔹 Create New Scratch Card
+function aiscratch_render_create_card() {
+    global $wpdb;
+
+    if (isset($_POST['aiscratch_submit'])) {
+        check_admin_referer('aiscratch_create_card');
+
+        $table = $wpdb->prefix . 'ai_scratch_cards';
+
+        $title          = sanitize_text_field($_POST['title']);
+        $cover_image    = esc_url_raw($_POST['cover_image']);
+        $prize_type     = sanitize_text_field($_POST['prize_type']);
+        $prize_content  = sanitize_text_field($_POST['prize_content']);
+        $probability    = intval($_POST['probability']);
+        $surface_color  = sanitize_hex_color($_POST['surface_color']);
+        $max_wins       = $_POST['max_wins'] !== '' ? intval($_POST['max_wins']) : null;
+        $expiration     = $_POST['expiration'] !== '' ? sanitize_text_field($_POST['expiration']) : null;
+        $email_capture  = isset($_POST['email_capture']) ? 1 : 0;
+        $webhook_url    = esc_url_raw($_POST['webhook_url']);
+
+        $wpdb->insert($table, [
+            'title'         => $title,
+            'cover_image'   => $cover_image,
+            'prize_type'    => $prize_type,
+            'prize_content' => $prize_content,
+            'probability'   => $probability,
+            'surface_color' => $surface_color,
+            'max_wins'      => $max_wins,
+            'expiration'    => $expiration,
+            'email_capture' => $email_capture,
+            'webhook_url'   => $webhook_url,
+            'created_at'    => current_time('mysql')
+        ]);
+
+        echo '<div class="notice notice-success"><p>Scratch card created successfully.</p></div>';
+    }
+    ?>
+
+    <div class="wrap">
+        <h1>Create New Scratch Card</h1>
+        <form method="post">
+            <?php wp_nonce_field('aiscratch_create_card'); ?>
+            <table class="form-table">
+                <tr>
+                    <th><label for="title">Card Title</label></th>
+                    <td><input type="text" name="title" required class="regular-text"></td>
+                </tr>
+                <tr>
+                    <th><label for="cover_image">Cover Image URL</label></th>
+                    <td><input type="text" name="cover_image" class="regular-text" placeholder="https://example.com/cover.jpg"></td>
+                </tr>
+                <tr>
+                    <th><label for="prize_type">Prize Type</label></th>
+                    <td>
+                        <select name="prize_type">
+                            <option value="text">Custom Text</option>
+                            <option value="coupon">Coupon Code</option>
+                            <option value="link">Redirect Link</option>
+                            <option value="image">Image</option>
+                            <option value="none">No Prize</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="prize_content">Prize Content</label></th>
+                    <td><input type="text" name="prize_content" class="regular-text" placeholder="10% OFF or URL or image link"></td>
+                </tr>
+                <tr>
+                    <th><label for="probability">Win Probability (%)</label></th>
+                    <td><input type="number" name="probability" value="100" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <th><label for="surface_color">Scratch Surface Color</label></th>
+                    <td><input type="text" name="surface_color" class="regular-text" placeholder="#999999"></td>
+                </tr>
+                <tr>
+                    <th><label for="max_wins">Max Wins</label></th>
+                    <td><input type="number" name="max_wins" placeholder="Optional"></td>
+                </tr>
+                <tr>
+                    <th><label for="expiration">Expiration Date</label></th>
+                    <td><input type="date" name="expiration"></td>
+                </tr>
+                <tr>
+                    <th><label for="email_capture">Require Email Before Scratch</label></th>
+                    <td><input type="checkbox" name="email_capture" value="1"> Enable lead capture</td>
+                </tr>
+                <tr>
+                    <th><label for="webhook_url">Webhook URL (optional)</label></th>
+                    <td><input type="text" name="webhook_url" class="regular-text" placeholder="https://your-crm-endpoint.com/webhook"></td>
+                </tr>
+            </table>
+
+            <?php submit_button('Create Scratch Card', 'primary', 'aiscratch_submit'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// 🔹 Analytics Page
+function aiscratch_render_analytics() {
+    global $wpdb;
+
+    $cards_table = $wpdb->prefix . 'ai_scratch_cards';
+    $logs_table  = $wpdb->prefix . 'ai_scratch_logs';
+
+    $total_plays = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table");
+    $total_wins  = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table WHERE result = 'win'");
+    $win_rate    = $total_plays > 0 ? round(($total_wins / $total_plays) * 100, 2) : 0;
+
+    $cards = $wpdb->get_results("SELECT * FROM $cards_table ORDER BY created_at DESC");
+    ?>
+    <div class="wrap">
+        <h1>Scratch Card Analytics</h1>
+
+        <h2>Global Stats</h2>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Total Plays</td>
+                    <td><?php echo esc_html($total_plays); ?></td>
+                </tr>
+                <tr>
+                    <td>Total Wins</td>
+                    <td><?php echo esc_html($total_wins); ?></td>
+                </tr>
+                <tr>
+                    <td>Global Win Rate</td>
+                    <td><?php echo esc_html($win_rate); ?>%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Per Card Stats</h2>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Card Title</th>
+                    <th>Total Plays</th>
+                    <th>Wins</th>
+                    <th>Win Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($cards as $card) :
+                    $card_id = intval($card->id);
+                    $plays = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $logs_table WHERE card_id = %d", $card_id));
+                    $wins  = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $logs_table WHERE card_id = %d AND result = 'win'", $card_id));
+                    $rate  = $plays > 0 ? round(($wins / $plays) * 100, 2) : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($card->title); ?></td>
+                        <td><?php echo esc_html($plays); ?></td>
+                        <td><?php echo esc_html($wins); ?></td>
+                        <td><?php echo esc_html($rate); ?>%</td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
     <?php
 }
