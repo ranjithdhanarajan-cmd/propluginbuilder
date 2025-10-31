@@ -31,7 +31,7 @@ $default_result = $has_prize ? 'win' : 'lose';
       <?php elseif ($has_prize && $prize_type === 'image'): ?>
         <img src="<?php echo esc_url($prize_content); ?>" alt="<?php esc_attr_e('Prize Image', 'ai-scratch-card-rewards'); ?>" class="aiscratch-prize-img" />
       <?php else: ?>
-        <p class="aiscratch-lose"><?php echo esc_html($lose_message); ?></p>
+         <p class="aiscratch-lose"><?php echo esc_html($lose_message); ?></p>
       <?php endif; ?>
     </div>
 
