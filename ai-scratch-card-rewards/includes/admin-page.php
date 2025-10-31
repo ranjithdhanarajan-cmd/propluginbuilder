@@ -140,15 +140,19 @@ function aiscratch_render_all_cards() {
 function aiscratch_render_analytics() {
     global $wpdb;
 
-    $logs_table = $wpdb->prefix . 'ai_scratch_logs';
+    $cards_table = $wpdb->prefix . 'ai_scratch_cards';
+    $logs_table  = $wpdb->prefix . 'ai_scratch_logs';
 
     $total_plays = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table");
     $total_wins  = $wpdb->get_var("SELECT COUNT(*) FROM $logs_table WHERE result = 'win'");
     $win_rate    = $total_plays > 0 ? round(($total_wins / $total_plays) * 100, 2) : 0;
+
+    $cards = $wpdb->get_results("SELECT * FROM $cards_table ORDER BY created_at DESC");
     ?>
     <div class="wrap">
         <h1>Scratch Card Analytics</h1>
 
+        <h2>Global Stats</h2>
         <table class="widefat striped">
             <thead>
                 <tr>
@@ -166,9 +170,40 @@ function aiscratch_render_analytics() {
                     <td><?php echo esc_html($total_wins); ?></td>
                 </tr>
                 <tr>
-                    <td>Win Rate</td>
+                    <td>Global Win Rate</td>
                     <td><?php echo esc_html($win_rate); ?>%</td>
                 </tr>
+            </tbody>
+        </table>
+
+        <h2>Per Card Stats</h2>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Card Title</th>
+                    <th>Total Plays</th>
+                    <th>Wins</th>
+                    <th>Win Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($cards as $card) :
+                    $card_id = intval($card->id);
+                    $plays = $wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM $logs_table WHERE card_id = %d", $card_id
+                    ));
+                    $wins = $wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM $logs_table WHERE card_id = %d AND result = 'win'", $card_id
+                    ));
+                    $rate = $plays > 0 ? round(($wins / $plays) * 100, 2) : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($card->title); ?></td>
+                        <td><?php echo esc_html($plays); ?></td>
+                        <td><?php echo esc_html($wins); ?></td>
+                        <td><?php echo esc_html($rate); ?>%</td>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
