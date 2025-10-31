@@ -11,7 +11,8 @@ function aiscratch_create_tables() {
     $logs_table  = $wpdb->prefix . 'ai_scratch_logs';
     $leads_table = $wpdb->prefix . 'ai_scratch_leads';
 
-    $sql = "
+    // ✅ Split each CREATE TABLE into its own SQL string
+    $sql1 = "
     CREATE TABLE $cards_table (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
@@ -26,7 +27,9 @@ function aiscratch_create_tables() {
         webhook_url TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;
+    ";
 
+    $sql2 = "
     CREATE TABLE $logs_table (
         id INT AUTO_INCREMENT PRIMARY KEY,
         card_id INT NOT NULL,
@@ -36,7 +39,9 @@ function aiscratch_create_tables() {
         prize TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;
+    ";
 
+    $sql3 = "
     CREATE TABLE $leads_table (
         id INT AUTO_INCREMENT PRIMARY KEY,
         card_id INT NOT NULL,
@@ -47,5 +52,8 @@ function aiscratch_create_tables() {
     ) $charset_collate;
     ";
 
-    dbDelta($sql);
+    // ✅ Run them separately
+    dbDelta($sql1);
+    dbDelta($sql2);
+    dbDelta($sql3);
 }
