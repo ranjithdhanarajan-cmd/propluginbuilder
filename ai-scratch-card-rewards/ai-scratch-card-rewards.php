@@ -1,53 +1,51 @@
 <?php
-/**
- * Plugin Name: AI Scratch Card Rewards
- * Description: Create gamified scratch cards with prizes, lead capture, and webhook integrations — all inside WordPress.
- * Version: 1.0.0
- * Author: Ranjith Dhanarajan
- * License: GPL2+
- * Text Domain: ai-scratch-card-rewards
- * Domain Path: /languages
- */
+if (!defined('ABSPATH')) exit;
 
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
-}
+function aiscratch_create_tables() {
+    global $wpdb;
+    $charset_collate = $wpdb->get_charset_collate();
 
-// Plugin Constants
-define('AISCRATCH_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('AISCRATCH_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('AISCRATCH_VERSION', '1.0.0');
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-// Includes
-require_once AISCRATCH_PLUGIN_DIR . 'includes/admin-page.php';
-require_once AISCRATCH_PLUGIN_DIR . 'includes/shortcode.php';
-require_once AISCRATCH_PLUGIN_DIR . 'includes/db-functions.php';
-require_once AISCRATCH_PLUGIN_DIR . 'includes/admin-ajax.php';
+    $cards_table = $wpdb->prefix . 'ai_scratch_cards';
+    $logs_table  = $wpdb->prefix . 'ai_scratch_logs';
+    $leads_table = $wpdb->prefix . 'ai_scratch_leads';
 
-// Enqueue Scripts & Styles
-function aiscratch_enqueue_assets() {
-    wp_enqueue_style('aiscratch-style', AISCRATCH_PLUGIN_URL . 'assets/css/style.css', [], AISCRATCH_VERSION);
+    $sql = "
+    CREATE TABLE $cards_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        cover_image TEXT,
+        prize_type VARCHAR(20),
+        prize_content TEXT,
+        probability INT DEFAULT 100,
+        surface_color VARCHAR(10),
+        max_wins INT DEFAULT NULL,
+        expiration DATE DEFAULT NULL,
+        email_capture TINYINT(1) DEFAULT 0,
+        webhook_url TEXT DEFAULT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
 
-    wp_enqueue_script('jquery'); // Required by wScratchPad
-    wp_enqueue_script('wScratchPad', AISCRATCH_PLUGIN_URL . 'assets/js/wScratchPad.js', ['jquery'], AISCRATCH_VERSION, true);
-    wp_enqueue_script('aiscratch-script', AISCRATCH_PLUGIN_URL . 'assets/js/scratch-interaction.js', ['jquery', 'wScratchPad'], AISCRATCH_VERSION, true);
+    CREATE TABLE $logs_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        card_id INT NOT NULL,
+        user_id INT DEFAULT 0,
+        ip_address VARCHAR(45),
+        result VARCHAR(10),
+        prize TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
 
-    wp_localize_script('aiscratch-script', 'AISCRATCH', [
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce'    => wp_create_nonce('aiscratch_nonce')
-    ]);
-}
-add_action('wp_enqueue_scripts', 'aiscratch_enqueue_assets');
+    CREATE TABLE $leads_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        card_id INT NOT NULL,
+        name VARCHAR(255),
+        email VARCHAR(255),
+        consent TINYINT(1) DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
+    ";
 
-// Activation Hook: create DB tables
-register_activation_hook(__FILE__, 'aiscratch_activate');
-function aiscratch_activate() {
-    require_once AISCRATCH_PLUGIN_DIR . 'includes/db-functions.php';
-    aiscratch_create_tables();
-}
-
-// Deactivation Hook: no-op for now
-register_deactivation_hook(__FILE__, 'aiscratch_deactivate');
-function aiscratch_deactivate() {
-    // Maybe later: disable schedules, cleanup temp files
+    dbDelta($sql);
 }
