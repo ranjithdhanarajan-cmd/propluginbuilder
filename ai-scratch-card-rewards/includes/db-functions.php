@@ -1,6 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+if (!function_exists('aiscratch_create_tables')) {
+
 function aiscratch_create_tables() {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
@@ -26,11 +28,7 @@ function aiscratch_create_tables() {
         webhook_url TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;
-    ";
-
-    $sql2 = "
-    CREATE TABLE $logs_table (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+@@ -34,25 +36,27 @@ function aiscratch_create_tables() {
         card_id INT NOT NULL,
         user_id INT DEFAULT 0,
         ip_address VARCHAR(45),
@@ -55,4 +53,6 @@ function aiscratch_create_tables() {
     dbDelta($sql1);
     dbDelta($sql2);
     dbDelta($sql3);
+}
+
 }
