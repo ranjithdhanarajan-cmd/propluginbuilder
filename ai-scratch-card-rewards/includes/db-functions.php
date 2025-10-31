@@ -5,69 +5,53 @@ function aiscratch_create_tables() {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
 
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
     $cards_table = $wpdb->prefix . 'ai_scratch_cards';
     $logs_table  = $wpdb->prefix . 'ai_scratch_logs';
     $leads_table = $wpdb->prefix . 'ai_scratch_leads';
 
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-    // Table 1: Scratch Cards
-    $sql1 = "CREATE TABLE $cards_table (
-        id INT NOT NULL AUTO_INCREMENT,
+    $sql1 = "
+    CREATE TABLE $cards_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         cover_image TEXT,
-        prize_type VARCHAR(50),
+        prize_type VARCHAR(20),
         prize_content TEXT,
         probability INT DEFAULT 100,
-        surface_color VARCHAR(20),
-        max_wins INT NULL,
-        expiration DATETIME NULL,
-        webhook_url TEXT,
+        surface_color VARCHAR(10),
+        max_wins INT DEFAULT NULL,
+        expiration DATE DEFAULT NULL,
         email_capture TINYINT(1) DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-    dbDelta($sql1);
+        webhook_url TEXT DEFAULT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
+    ";
 
-    // Logs table
-$logs_table = $wpdb->prefix . 'ai_scratch_logs';
-$charset_collate = $wpdb->get_charset_collate();
-
-$sql2 = "CREATE TABLE $logs_table (
-    id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    card_id BIGINT(20) NOT NULL,
-    user_id BIGINT(20) DEFAULT NULL,
-    ip_address VARCHAR(100),
-    result ENUM('win','lose') NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY  (id)
-) $charset_collate;";
-
-require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-dbDelta($sql2);
-
-    // Table 2: Scratch Logs
-    $sql2 = "CREATE TABLE $logs_table (
-        id BIGINT NOT NULL AUTO_INCREMENT,
+    $sql2 = "
+    CREATE TABLE $logs_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
         card_id INT NOT NULL,
-        user_id BIGINT NULL,
+        user_id INT DEFAULT 0,
         ip_address VARCHAR(45),
-        result VARCHAR(10), -- win/lose
+        result VARCHAR(10),
         prize TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-    dbDelta($sql2);
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
+    ";
 
-    // Table 3: Leads
-    $sql3 = "CREATE TABLE $leads_table (
-        id BIGINT NOT NULL AUTO_INCREMENT,
+    $sql3 = "
+    CREATE TABLE $leads_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
         card_id INT NOT NULL,
         name VARCHAR(255),
         email VARCHAR(255),
-        consent TINYINT(1),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
+        consent TINYINT(1) DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;
+    ";
+
+    dbDelta($sql1);
+    dbDelta($sql2);
     dbDelta($sql3);
 }
