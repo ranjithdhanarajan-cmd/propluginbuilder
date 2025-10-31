@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 
 function aiscratch_render_card_shortcode($atts) {
-$atts = shortcode_atts(
+ $atts = shortcode_atts(
         [
             'id' => 0,
         ],
@@ -31,7 +31,7 @@ $atts = shortcode_atts(
         return '<p>' . esc_html__('This scratch card has expired.', 'ai-scratch-card-rewards') . '</p>';
     }
 
- if (!empty($card->max_wins)) {
+if (!empty($card->max_wins)) {
         $wins = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $logs_table WHERE card_id = %d AND result = 'win'", $card_id));
         if ($wins >= (int) $card->max_wins) {
             return '<p>' . esc_html__('All prizes for this scratch card have already been claimed.', 'ai-scratch-card-rewards') . '</p>';
@@ -40,7 +40,7 @@ $atts = shortcode_atts(
 
 $cookie_key = 'aiscratch_played_' . $card_id;
     if (isset($_COOKIE[$cookie_key])) {
-         return '<p>' . esc_html__('You already played this scratch card.', 'ai-scratch-card-rewards') . '</p>';
+        return '<p>' . esc_html__('You already played this scratch card.', 'ai-scratch-card-rewards') . '</p>';
     }
 
     wp_enqueue_style('aiscratch-frontend');
