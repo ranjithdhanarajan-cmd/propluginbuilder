@@ -22,7 +22,7 @@ function aiscratch_render_all_cards() {
             <table class="widefat striped">
                 <thead>
                     <tr>
-                <th><?php esc_html_e('ID', 'ai-scratch-card-rewards'); ?></th>
+               <th><?php esc_html_e('ID', 'ai-scratch-card-rewards'); ?></th>
                         <th><?php esc_html_e('Title', 'ai-scratch-card-rewards'); ?></th>
                         <th><?php esc_html_e('Status', 'ai-scratch-card-rewards'); ?></th>
                         <th><?php esc_html_e('Shortcode', 'ai-scratch-card-rewards'); ?></th>
@@ -94,9 +94,9 @@ function aiscratch_render_create_card() {
         }
     }
 
-    if (isset($_POST['aiscratch_submit'])) {
+     if (isset($_POST['aiscratch_submit'])) {
         check_admin_referer('aiscratch_create_card');
-
+         
  $card_id = isset($_POST['card_id']) ? intval($_POST['card_id']) : 0;
 
  $title         = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
@@ -168,8 +168,8 @@ function aiscratch_render_create_card() {
 
     ?>
 
-     <div class="wrap">
-<h1><?php echo $card_id ? esc_html__('Edit Scratch Card', 'ai-scratch-card-rewards') : esc_html__('Create New Scratch Card', 'ai-scratch-card-rewards'); ?></h1>
+    <div class="wrap">
+ <h1><?php echo $card_id ? esc_html__('Edit Scratch Card', 'ai-scratch-card-rewards') : esc_html__('Create New Scratch Card', 'ai-scratch-card-rewards'); ?></h1>
 
         <?php if ($message) { ?>
             <div class="notice notice-success is-dismissible"><p><?php echo esc_html($message); ?></p></div>
@@ -211,7 +211,7 @@ function aiscratch_render_create_card() {
                     </td>
                 </tr>
                 <tr>
-                <th><label for="prize_content"><?php esc_html_e('Prize Content', 'ai-scratch-card-rewards'); ?></label></th>
+               <th><label for="prize_content"><?php esc_html_e('Prize Content', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="prize_content" class="regular-text" placeholder="10% OFF or URL or image link" value="<?php echo esc_attr($prize_content_value); ?>"></td>
                 </tr>
                 <tr>
@@ -219,7 +219,7 @@ function aiscratch_render_create_card() {
                     <td><input type="number" name="probability" value="<?php echo esc_attr($probability_value); ?>" min="0" max="100"></td>
                 </tr>
                 <tr>
-                <th><label for="surface_color"><?php esc_html_e('Scratch Surface Color', 'ai-scratch-card-rewards'); ?></label></th>
+               <th><label for="surface_color"><?php esc_html_e('Scratch Surface Color', 'ai-scratch-card-rewards'); ?></label></th>
                     <td><input type="text" name="surface_color" class="regular-text" placeholder="#999999" value="<?php echo esc_attr($surface_color_value); ?>"></td>
                 </tr>
                 <tr>
@@ -362,9 +362,10 @@ function aiscratch_render_analytics() {
                         <td><?php echo esc_html($wins); ?></td>
                         <td><?php echo esc_html($rate); ?>%</td>
                     </tr>
-        <?php } ?>
+         <?php } ?>
             </tbody>
         </table>
     </div>
     <?php
 }
+ai-scratch-card-rewards/includes
