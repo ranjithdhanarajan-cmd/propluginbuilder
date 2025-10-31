@@ -29,6 +29,23 @@ function aiscratch_create_tables() {
     ) $charset_collate;";
     dbDelta($sql1);
 
+    // Logs table
+$logs_table = $wpdb->prefix . 'ai_scratch_logs';
+$charset_collate = $wpdb->get_charset_collate();
+
+$sql2 = "CREATE TABLE $logs_table (
+    id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    card_id BIGINT(20) NOT NULL,
+    user_id BIGINT(20) DEFAULT NULL,
+    ip_address VARCHAR(100),
+    result ENUM('win','lose') NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY  (id)
+) $charset_collate;";
+
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+dbDelta($sql2);
+
     // Table 2: Scratch Logs
     $sql2 = "CREATE TABLE $logs_table (
         id BIGINT NOT NULL AUTO_INCREMENT,
