@@ -368,4 +368,3 @@ function aiscratch_render_analytics() {
     </div>
     <?php
 }
-ai-scratch-card-rewards/includes
