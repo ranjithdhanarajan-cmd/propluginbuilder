@@ -51,7 +51,7 @@ function aiscratch_create_tables() {
     ) $charset_collate;
     ";
 
-    // Call dbDelta separately
+    // ✅ Run each one separately
     dbDelta($sql1);
     dbDelta($sql2);
     dbDelta($sql3);
